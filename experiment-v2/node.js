@@ -11,7 +11,8 @@ function Node(a_outputFunc,a_combinatorFunc,a_isBinary,a_nullValFunc,a_index) {
     };
 
     this.deepClone = function() {
-        return new Node(outputFunc,isBinary,nullValFunc,index);
+        var _index = index;
+        return new Node(outputFunc,combinatorFunc,isBinary,nullValFunc,_index);
     };
 
     this.setNullVal = function (actor) {
@@ -19,11 +20,11 @@ function Node(a_outputFunc,a_combinatorFunc,a_isBinary,a_nullValFunc,a_index) {
     };
 
     this.contribute = function(a_val) {
-        val = combinatorFunc(val,a_val);
+        val = combinatorFunc(this.getVal(),a_val);
     };
 
     this.executeOutput = function(actor) {
-        if (isBinary && val) {
+        if (isBinary && this.getVal()) {
             outputFunc(actor);
         }
     };

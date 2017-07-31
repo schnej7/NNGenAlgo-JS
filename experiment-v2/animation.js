@@ -15,34 +15,34 @@ var IMG = new Image();
 function step() {
     MUTATED_BRAIN.eval();
 
-    // Always walk for now
-    ACTOR.move();
-
-    if (ACTOR.getFitness() > MAX_SCORE + 10) {
+    if (ACTOR.getFitness() > MAX_SCORE + 40) {
         ACTOR.kill();
     }
 
     if (ACTOR.isDead()) {
         if (ACTOR.getFitness() > MAX_SCORE) {
-            BRAIN = MUTATED_BRAIN.deepClone();
+            BRAIN = MUTATED_BRAIN;
             GENERATIONS++;
             console.log("Generation ", GENERATIONS);
             LAST_MUTATION = ITERATIONS;
             MAX_SCORE = ACTOR.getFitness();
         }
+        console.log(ACTOR.getFitness());
 
         ACTOR = new Actor(HEIGHT,WIDTH);
 
         MUTATED_BRAIN = BRAIN.deepClone();
 
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < randomIntFromInterval(0,Math.max(100,(ITERATIONS-LAST_MUTATION)/10)); i++) {
             MUTATED_BRAIN.mutate();
         }
+        console.log("mutation");
+        MUTATED_BRAIN.log();
 
         ITERATIONS++;
-        console.log(ITERATIONS);
-        console.log(MAX_SCORE);
+        console.log(ITERATIONS,MAX_SCORE,GENERATIONS);
     }
+    ACTOR.reset();
 };
 
 function draw() {

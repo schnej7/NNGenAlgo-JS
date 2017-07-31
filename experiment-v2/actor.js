@@ -1,13 +1,16 @@
 function Actor(a_areaHeight,a_areaWidth) {
-    var X0 = 270;
-    var Y0 = 150;
+    var dead = false;
+
+    var X0 = 260;
+    var Y0 = 260;
+    var D0 = 45;
 
     var areaWidth = a_areaWidth;
     var areaHeight = a_areaHeight;
 
     var x = X0;
     var y = Y0;
-    var dir = 0;
+    var dir = D0;
     var maxX = x;
     var minX = x;
     var maxY = y;
@@ -22,6 +25,7 @@ function Actor(a_areaHeight,a_areaWidth) {
     var stillInARow = 0;
 
     var lastTurnFitnessChanged = 0;
+    var lastFitness = 0;
 
     this.getdir = function () {
         return dir;
@@ -39,8 +43,9 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.reset = function () {
-        if (this.getFitness() != lastTurnFitnessChanged) {
+        if (this.getFitness() != lastFitness) {
             lastTurnFitnessChanged = age;
+            lastFitness = this.getFitness();
         }
         age+= 1;
         if (!moved) {
@@ -59,15 +64,15 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.getFitness = function () {
-        return Math.max(0,maxX-X0 + X0-minX + maxY-Y0 + Y0-minY);
+        return Math.max(0,maxX-X0 + X0-minX + (maxY-Y0)*10 + (Y0-minY)*10);
     };
 
     this.kill = function() {
-        this.dead = true;
+        dead = true;
     };
 
     this.isDead = function() {
-        return turnedThisStep > 1 || this.crashed() || stillInARow > 10 || age-lastTurnFitnessChanged > 40;
+        return turnedThisStep > 1 || this.crashed() || stillInARow > 10 || this.turnsAgoFitnessChange() > 40 || dead;
     };
 
     this.getInputs = function() {
@@ -75,13 +80,13 @@ function Actor(a_areaHeight,a_areaWidth) {
             {"func":function(actor){ return actor.getdir();}},
             {"func":function(actor){ return actor.getx();}},
             {"func":function(actor){ return actor.gety();}},
-            {"func":function(actor){ return actor.getage();}},
+            //{"func":function(actor){ return actor.getage();}},
         ];
     };
 
     this.getOutputs = function() {
         return [
-            // TODO: Add this.move()
+            {"func":function(actor){actor.move();}},
             {"func":function(actor){actor.rotateLeft();}},
             {"func":function(actor){actor.rotateRight();}},
         ];

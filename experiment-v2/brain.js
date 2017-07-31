@@ -1,8 +1,9 @@
 function Brain(a_inputs,a_outputs) {
+    var self = this;
     // Array of nodes to be executed from 0 - N
-    nodes = new Array(1000);
+    var nodes = new Array(100);
     // Map of connections between nodes, indexed by source node index
-    connections = {};
+    var connections = {};
 
     var inputs = a_inputs;
     var outputs = a_outputs;
@@ -20,11 +21,14 @@ function Brain(a_inputs,a_outputs) {
     // Setup output nodes
     for (var outputIndex = 0; outputIndex < outputs.length; outputIndex++) {
         var func = outputs[outputIndex].func;
-        nodes[lastNodeIndex--] = new Node(func,null,false,null,lastNodeIndex);
+        nodes[lastNodeIndex] = new Node(func,null,true,null,lastNodeIndex--);
     }
 
     this.deepClone = function() {
+        console.log("deep clone");
+        this.log();
         var clone = new Brain(a_inputs,a_outputs);
+        this.log();
 
         for (var nodeIndex = 0; nodeIndex < nodes.length; nodeIndex++) {
             if (nodes[nodeIndex]) {
@@ -67,10 +71,9 @@ function Brain(a_inputs,a_outputs) {
     };
 
     this.eval = function(actor) {
-        for (var nodeIndex = 0; nodeIndex <= nodes.length; nodeIndex++) {
+        for (var nodeIndex = 0; nodeIndex < nodes.length; nodeIndex++) {
             var sourceNode = nodes[nodeIndex];
             if (sourceNode) {
-                sourceNode.setNullVal(actor);
                 var connectionsAtIndex = connections[nodeIndex] || [];
                 for (var connectionIndex = 0; connectionIndex < connectionsAtIndex.length; connectionIndex++) {
                     var connection = connectionsAtIndex[connectionIndex];
@@ -79,7 +82,10 @@ function Brain(a_inputs,a_outputs) {
                         connection.fire(sourceNode,destNode);
                     }
                 }
-                nodes[nodeIndex].executeOutput(ACTOR);
+                if (sourceNode.getIndex() > lastNodeIndex) {
+                    sourceNode.executeOutput(ACTOR);
+                }
+                sourceNode.setNullVal(actor);
             }
         }
     };
@@ -87,7 +93,7 @@ function Brain(a_inputs,a_outputs) {
     this.getRandomSourceNode = function() {
         var node = null;
         for (var limit = 0; !node && limit < 100; limit++) {
-            node = nodes[randomIntFromInterval(0,lastNodeIndex)+1];
+            node = nodes[randomIntFromInterval(0,lastNodeIndex+1)];
         }
         return node;
     };
@@ -117,7 +123,7 @@ function Brain(a_inputs,a_outputs) {
         }
     };
 
-    this.mutate = function() {
+    function mutateNewNode() {
         // Add new node
         for (var limit = 0; limit < 100; limit++) {
             var nodeIndex = randomIntFromInterval(firstNodeIndex,lastNodeIndex+1);
@@ -131,30 +137,32 @@ function Brain(a_inputs,a_outputs) {
                 break;
             }
         }
+    };
 
+    function mutateNewConnection() {
         // Add new connection
         for (var limit = 0; limit < 100; limit++) {
-            var sourceNode = this.getRandomSourceNode()
+            var sourceNode = self.getRandomSourceNode();
             if (sourceNode) {
-                if (!connections[sourceNode.getIndex()]) {
-                    connections[sourceNode.getIndex()] = [];
-                }
-                var destNode = this.getRandomDestNode(sourceNode);
+                var destNode = self.getRandomDestNode(sourceNode);
                 if (destNode) {
-                    var coef = randomIntFromInterval(Number.MIN_SAFE_INTEGER,Number.MAX_SAFE_INTEGER);
-                    var func = null;
-                    if (sourceNode.isBinary() && destNode.isBinary()) {
-                        func = BinaryToBinaryConnectionFunctions[randomIntFromInterval(0,BinaryToBinaryConnectionFunctions.length+1)];
-                    } else if (!sourceNode.isBinary() && destNode.isBinary()) {
-                        func = DiscreteToBinaryConnectionFunctions[randomIntFromInterval(0,DiscreteToBinaryConnectionFunctions.length+1)];
-                    } else if (!sourceNode.isBinary() && !destNode.isBinary()) {
-                        func = DiscreteToDescreteConnectionFunctions[randomIntFromInterval(0,DiscreteToDescreteConnectionFunctions.length+1)];
-                    }
-                    connections[sourceNode.getIndex()].push(new Connection(sourceNode.getIndex(),destNode.getIndex(),coef,func));
+                    var coef = Math.random();
+                    var func = self.getRandomFunction(sourceNode,destNode);
+                    self.addConnection(new Connection(sourceNode.getIndex(),destNode.getIndex(),coef,func),sourceNode.getIndex());
+                    break;
                 }
             }
         }
-        console.log("mutation");
-        this.log();
+
+    }
+
+    this.mutate = function() {
+        if (randomIntFromInterval(0,100) < 20){
+            mutateNewNode();
+        }
+
+        if (randomIntFromInterval(0,100) < 40){
+            mutateNewConnection();
+        }
     };
 };
