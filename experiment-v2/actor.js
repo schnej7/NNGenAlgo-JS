@@ -1,9 +1,14 @@
 function Actor(a_areaHeight,a_areaWidth) {
     var dead = false;
 
-    var X0 = 260;
-    var Y0 = 260;
-    var D0 = 45;
+    var MARGIN = 15;
+
+    var X0 = randomIntFromInterval(MARGIN,a_areaWidth-MARGIN);
+    var Y0 = randomIntFromInterval(MARGIN,a_areaWidth-MARGIN);
+    var D0 = randomIntFromInterval(0,360);
+    //var X0 = 280;
+    //var Y0 = 150;
+    //var D0 = 0;
 
     var areaWidth = a_areaWidth;
     var areaHeight = a_areaHeight;
@@ -27,19 +32,56 @@ function Actor(a_areaHeight,a_areaWidth) {
     var lastTurnFitnessChanged = 0;
     var lastFitness = 0;
 
+    var lastOutputs = {};
+    var thisOutputs = {};
+    var changeItUpMultiplier = 0;
+
+    function distToCenter() {
+        var dx = Math.abs(x - areaWidth/2);
+        var dy = Math.abs(y - areaHeight/2);
+        return Math.sqrt(Math.pow(dx,2),Math.pow(dy,2));
+    };
+
+    this.getdirpercent = function () {
+        return dir/360;
+    };
     this.getdir = function () {
         return dir;
     };
 
+    this.getypercent = function () {
+        return y / areaHeight;
+    };
     this.gety = function () {
         return y;
     };
 
+    this.getxpercent = function () {
+        return x/areaWidth;
+    };
     this.getx = function () {
         return x;
     };
+
     this.getage = function () {
         return age;
+    };
+
+    function compareOutputs(o1,o2) {
+        for (key in o1) {
+            if (o1[key] !== o2[key]) {
+                return false;
+            }
+        }
+        for (key in o2) {
+            if (o1[key] !== o2[key]) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    this.postEval = function() {
     };
 
     this.reset = function () {
@@ -47,12 +89,21 @@ function Actor(a_areaHeight,a_areaWidth) {
             lastTurnFitnessChanged = age;
             lastFitness = this.getFitness();
         }
-        age+= 1;
         if (!moved) {
             stillInARow ++;
         }
         turnedThisStep = 0;
         moved = false;
+
+        if (age > 1 && !compareOutputs(lastOutputs, thisOutputs)) {
+            changeItUpMultiplier++;
+            lastOutputs = thisOutputs;
+        } else if (age <= 1) {
+            lastOutputs = thisOutputs;
+        }
+        thisOutputs = {};
+
+        age+= 1;
     };
 
     this.crashed = function() {
@@ -64,7 +115,11 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.getFitness = function () {
-        return Math.max(0,maxX-X0 + X0-minX + (maxY-Y0)*10 + (Y0-minY)*10);
+        var crashedBonus = this.crashed() ? -100 : 0;
+        var fit = Math.max(0,maxX-X0 + X0-minX + maxY-Y0 + Y0-minY + crashedBonus);
+        fit += 100 * changeItUpMultiplier;
+        //fit -= distToCenter() * 10;
+        return Math.floor(fit > 30 ? fit : 0);
     };
 
     this.kill = function() {
@@ -72,15 +127,15 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.isDead = function() {
-        return turnedThisStep > 1 || this.crashed() || stillInARow > 10 || this.turnsAgoFitnessChange() > 40 || dead;
+        return turnedThisStep > 2 || this.crashed() || stillInARow > 100 || this.turnsAgoFitnessChange() > 60 || dead || age > 300;
     };
 
     this.getInputs = function() {
         return [
-            {"func":function(actor){ return actor.getdir();}},
-            {"func":function(actor){ return actor.getx();}},
-            {"func":function(actor){ return actor.gety();}},
-            //{"func":function(actor){ return actor.getage();}},
+            {"func":function(actor){ return actor.getdirpercent(); }},
+            {"func":function(actor){ return actor.getxpercent();   }},
+            {"func":function(actor){ return actor.getypercent();   }},
+            {"func":function(actor){ return actor.getage(); }},
         ];
     };
 
@@ -93,6 +148,7 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.move = function() {
+        thisOutputs["move"]=true;
         stillInARow = 0;
         moved = true;
         x += Math.cos(dir * Math.PI / 180);
@@ -105,11 +161,13 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.rotateRight = function() {
+        thisOutputs["right"]=true;
         turnedThisStep++;
         dir = (dir + 2) % 360;
     };
 
     this.rotateLeft = function() {
+        thisOutputs["left"]=true;
         turnedThisStep++;
         dir = (dir - 2) % 360;
     };

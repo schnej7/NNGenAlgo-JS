@@ -13,10 +13,11 @@ var MUTATED_BRAIN = null;
 var IMG = new Image();
 
 function step() {
-    MUTATED_BRAIN.eval();
+    MUTATED_BRAIN.eval(ACTOR);
+    ACTOR.postEval();
 
-    if (ACTOR.getFitness() > MAX_SCORE + 40) {
-        ACTOR.kill();
+    if (ACTOR.getFitness() > MAX_SCORE + 50) {
+        //ACTOR.kill();
     }
 
     if (ACTOR.isDead()) {
@@ -33,7 +34,7 @@ function step() {
 
         MUTATED_BRAIN = BRAIN.deepClone();
 
-        for (var i = 0; i < randomIntFromInterval(0,Math.max(100,(ITERATIONS-LAST_MUTATION)/10)); i++) {
+        for (var i = 0; i < randomIntFromInterval(10,Math.max(40,(ITERATIONS-LAST_MUTATION)*10)); i++) {
             MUTATED_BRAIN.mutate();
         }
         console.log("mutation");

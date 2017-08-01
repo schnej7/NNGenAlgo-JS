@@ -19,4 +19,12 @@ function Connection(a_sourceNodeIndex,a_destNodeIndex,a_coef,a_func) {
     this.fire = function(sourceNode,destNodex) {
         destNodex.contribute(func(sourceNode.getVal(),coef));
     };
+
+    this.changeCoef = function(a_coef) {
+        coef = coef;
+    };
+
+    this.changeFunc = function(a_func) {
+        func = a_func;
+    };
 };
