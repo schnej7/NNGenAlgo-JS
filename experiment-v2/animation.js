@@ -1,5 +1,6 @@
 var HEIGHT = 300;
 var WIDTH = 300;
+var ACTOR_IMAGE;
 
 var ITERATIONS = 0;
 var GENERATIONS = 0;
@@ -65,10 +66,25 @@ function draw() {
     window.requestAnimationFrame(draw);
 };
 
+function drawFast() {
+    step();
+
+    ACTOR_IMAGE.css({
+        bottom: ACTOR.getx(),
+        left: ACTOR.gety(),
+        transform: "rotate(" + (ACTOR.getdir()-90) + "deg)"
+    });
+    // $("#VIEW").css("backgroundColor", "rgb(" + ACTOR.getage()%255 + ", " + randomIntFromInterval(0, 255) + ", " + ACTOR.getage()%255 + ")");
+    setTimeout(drawFast, 0);
+}
+
 function init() {
-    IMG.src = 'http://www.bludor.com/magazine/wp-content/themes/tma/images/bg/arrow.png';
-    window.requestAnimationFrame(draw);
-};
+    // IMG.src = 'http://www.bludor.com/magazine/wp-content/themes/tma/images/bg/arrow.png';
+    // window.requestAnimationFrame(draw);
+
+    ACTOR_IMAGE = $("#ACTOR_IMAGE");
+    drawFast();
+}
 
 $(document).ready(function (){
     ACTOR = new Actor(WIDTH,HEIGHT);

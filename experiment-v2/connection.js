@@ -17,11 +17,11 @@ function Connection(a_sourceNodeIndex,a_destNodeIndex,a_coef,a_func) {
     };
 
     this.fire = function(sourceNode,destNodex) {
-        destNodex.contribute(func(sourceNode.getVal(),coef));
+        destNodex.contribute(sourceNode.getVal());
     };
 
     this.changeCoef = function(a_coef) {
-        coef = coef;
+        coef = a_coef;
     };
 
     this.changeFunc = function(a_func) {
