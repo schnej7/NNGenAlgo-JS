@@ -115,11 +115,11 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.getFitness = function () {
-        var crashedBonus = this.crashed() ? -100 : 0;
+        var crashedBonus = this.crashed() ? -10 * age : 0;
         var fit = Math.max(0,maxX-X0 + X0-minX + maxY-Y0 + Y0-minY + crashedBonus);
         fit += 100 * changeItUpMultiplier;
         //fit -= distToCenter() * 10;
-        return Math.floor(fit > 30 ? fit : 0);
+        return Math.floor(fit > 30 ? fit : 0) / age;
     };
 
     this.kill = function() {
@@ -127,7 +127,7 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.isDead = function() {
-        return turnedThisStep > 1 || this.crashed() || stillInARow > 100 || this.turnsAgoFitnessChange() > 60 || dead || age > 300;
+        return turnedThisStep > 1 || this.crashed() || stillInARow > 400 || this.turnsAgoFitnessChange() > 60 || dead; // || age > 300;
     };
 
     this.getInputs = function() {

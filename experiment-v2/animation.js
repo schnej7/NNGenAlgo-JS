@@ -17,8 +17,8 @@ function step() {
     MUTATED_BRAIN.eval(ACTOR);
     ACTOR.postEval();
 
-    if (ACTOR.getFitness() > MAX_SCORE + 50) {
-        //ACTOR.kill();
+    if (ACTOR.getFitness() > MAX_SCORE + 1) {
+        ACTOR.kill();
     }
 
     if (ACTOR.isDead()) {
