@@ -85,6 +85,7 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.reset = function () {
+        if (age % 100 == 1) console.log(this.getFitness());
         if (this.getFitness() != lastFitness) {
             lastTurnFitnessChanged = age;
             lastFitness = this.getFitness();
@@ -115,11 +116,13 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.getFitness = function () {
-        var crashedBonus = this.crashed() ? -10 * age : 0;
-        var fit = Math.max(0,maxX-X0 + X0-minX + maxY-Y0 + Y0-minY + crashedBonus);
-        fit += 100 * changeItUpMultiplier;
+        if (this.crashed()) return 1;
+        var crashedBonus = this.crashed() ? Math.max(-100,-1*age) : 0;
+        var fit = Math.max(0,maxX-X0 + X0-minX + maxY-Y0 + Y0-minY + crashedBonus) + dist*10/age;
+        //fit += 100 * changeItUpMultiplier;
         //fit -= distToCenter() * 10;
-        return Math.floor(fit > 30 ? fit : 0) / age;
+        //return Math.floor(fit > 30 ? fit : 0) / age;
+        return Math.floor(fit > 30 ? fit : 0);
     };
 
     this.kill = function() {
@@ -127,7 +130,7 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.isDead = function() {
-        return turnedThisStep > 1 || this.crashed() || stillInARow > 400 || this.turnsAgoFitnessChange() > 60 || dead; // || age > 300;
+        return turnedThisStep > 1 || this.crashed() || stillInARow > 400 || this.turnsAgoFitnessChange() > 60 || this.getFitness() < 0.1 && age > 100 || dead; // || age > 300;
     };
 
     this.getInputs = function() {
@@ -148,7 +151,7 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.move = function() {
-        thisOutputs["move"]=true;
+        //thisOutputs["move"]=true;
         stillInARow = 0;
         moved = true;
         x += Math.cos(dir * Math.PI / 180);

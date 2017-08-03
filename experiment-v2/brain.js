@@ -1,7 +1,7 @@
 function Brain(a_inputs,a_outputs) {
     var self = this;
     // Array of nodes to be executed from 0 - N
-    var nodes = new Array(100);
+    var nodes = new Array(1000);
     // Map of connections between nodes, indexed by source node index
     var connections = {};
 

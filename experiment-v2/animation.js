@@ -17,7 +17,7 @@ function step() {
     MUTATED_BRAIN.eval(ACTOR);
     ACTOR.postEval();
 
-    if (ACTOR.getFitness() > MAX_SCORE + 1) {
+    if (ACTOR.getFitness() > Math.min(MAX_SCORE * 1.5, Math.max(MAX_SCORE+1,MAX_SCORE+20-GENERATIONS))) {
         ACTOR.kill();
     }
 
