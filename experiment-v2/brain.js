@@ -76,12 +76,22 @@ function Brain(a_inputs,a_outputs) {
                 if (sourceNode.getIndex() > lastNodeIndex) {
                     sourceNode.executeOutput(ACTOR);
                 }
+                //if (sourceNode.getIndex()>96 || sourceNode.getIndex() < 4) {
+                if (sourceNode.getIndex()==2) {
+                    //console.log("sn",sourceNode.getIndex());
+                    //sourceNode.logVal();
+                }
                 sourceNode.setNullVal(actor);
                 var connectionsAtIndex = connections[nodeIndex] || [];
                 for (var connectionIndex = 0; connectionIndex < connectionsAtIndex.length; connectionIndex++) {
                     var connection = connectionsAtIndex[connectionIndex];
                     var destNode = nodes[connection.getDestIndex()];
                     if (destNode) {
+                        if (destNode.getIndex()>96 || destNode.getIndex() < 4) {
+                            //console.log("dn",destNode.getIndex());
+                            //destNode.logVal();
+                        }
+
                         connection.fire(sourceNode,destNode);
                     }
                 }

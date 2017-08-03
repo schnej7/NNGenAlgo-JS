@@ -3,16 +3,16 @@ function randomIntFromInterval(min,max) {
 };
 
 var DiscreteNodeInitFunctions = [
-    function() {return Math.random();},
-    function() {return Math.random() * (Math.pow(10,Math.random()))},
+    // function() {return Math.random();},
+    // function() {return Math.random() * (Math.pow(10,Math.random()))},
 ];
 
 var BinaryCombinatorFunctions = [
     //function(val1,val2) { return val1 || val2 },
     //function(val1,val2) { return val1 && val2 },
     //function(val1,val2) { return val1 ^ val2 },
-    function(val1,val2) {return val2 ? 1 : -1;},
-    function(val1,val2) {return val2 ? 1 : -1;},
+    function(val1) {return val1 ? 1 : -1;},
+    function(val1) {return val1 ? 1 : -1;},
 ];
 
 var BinaryToBinaryConnectionFunctions = [

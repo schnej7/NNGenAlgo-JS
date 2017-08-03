@@ -1,7 +1,7 @@
 function Node(a_outputFunc,a_combinatorFunc,a_isBinary,a_nullValFunc,a_index,a_isASource) {
     var isBinary = a_isBinary;
     var nullValFunc = a_nullValFunc != null ? a_nullValFunc : isBinary ? function(actor) {return 0;} : function(actor) {return Math.random();};
-    var combinatorFunc = a_combinatorFunc || isBinary ? function(a_val1) {return a_val1 ? 1 : -1;} : function(a_val1, a_val2) {return a_val1 + a_val2;};
+    var combinatorFunc = a_combinatorFunc != null ? a_combinatorFunc : isBinary ? function(a_val1){return a_val1 ? 1 : -1;} : function(a_val1, a_val2) {return a_val1 + a_val2;};
     var outputFunc = a_outputFunc || function(){};
     var index = a_index;
     var val = 0;
@@ -32,11 +32,18 @@ function Node(a_outputFunc,a_combinatorFunc,a_isBinary,a_nullValFunc,a_index,a_i
     };
 
     this.contribute = function(a_val) {
-        val = combinatorFunc(this.getVal(),a_val);
+        if (isBinary) {
+            val += combinatorFunc(a_val);
+        } else {
+            val = combinatorFunc(this.getVal(),a_val);
+        }
         sourceDetected = true;
     };
 
     this.executeOutput = function(actor) {
+        if (this.getIndex()==98) {
+            //console.log("exec",val,this.getVal());
+        }
         if (isBinary && this.getVal()) {
             outputFunc(actor);
         }
@@ -51,7 +58,7 @@ function Node(a_outputFunc,a_combinatorFunc,a_isBinary,a_nullValFunc,a_index,a_i
     };
 
     this.logVal = function () {
-        console.log(val);
+        console.log(this.getIndex(),val, this.getVal());
     };
 
     this.changeCombinator = function(newFunc) {

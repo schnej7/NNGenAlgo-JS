@@ -127,7 +127,7 @@ function Actor(a_areaHeight,a_areaWidth) {
     };
 
     this.isDead = function() {
-        return turnedThisStep > 2 || this.crashed() || stillInARow > 100 || this.turnsAgoFitnessChange() > 60 || dead || age > 300;
+        return turnedThisStep > 1 || this.crashed() || stillInARow > 100 || this.turnsAgoFitnessChange() > 60 || dead || age > 300;
     };
 
     this.getInputs = function() {
