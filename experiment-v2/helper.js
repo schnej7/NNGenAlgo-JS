@@ -16,14 +16,14 @@ var BinaryCombinatorFunctions = [
 ];
 
 var BinaryToBinaryConnectionFunctions = [
-    function(val,coef) { return val ? 1 : -1 },
-    function(val,coef) { return val ? -1 : 1 },
+    function(val,coef) { return val },
+    function(val,coef) { return !val },
 ];
 
 var DiscreteToBinaryConnectionFunctions = [
-    function(val,coef) { return val > coef ? 1 : -1 },
-    function(val,coef) { return val < coef ? 1 : -1 },
-    function(val,coef) { return val == coef ? 1 : -1 }
+    function(val,coef) { return val > coef },
+    function(val,coef) { return val < coef },
+    function(val,coef) { return val == coef }
 ];
 
 var DiscreteCombinatorFunctions = [

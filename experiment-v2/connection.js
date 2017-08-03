@@ -17,7 +17,7 @@ function Connection(a_sourceNodeIndex,a_destNodeIndex,a_coef,a_func) {
     };
 
     this.fire = function(sourceNode,destNodex) {
-        destNodex.contribute(sourceNode.getVal());
+        destNodex.contribute(func(sourceNode.getVal(),coef));
     };
 
     this.changeCoef = function(a_coef) {
