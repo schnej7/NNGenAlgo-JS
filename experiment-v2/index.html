@@ -12,8 +12,14 @@
   <body>
     <!--<canvas id="VIEWPORT" height="300" width="300" style="border: 1px solid black">-->
     <!--</canvas>-->
-    <div id="VIEW" style="height: 300px; width: 300px; border: 1px solid black; position: relative">
-      <img id="ACTOR_IMAGE" src="http://www.bludor.com/magazine/wp-content/themes/tma/images/bg/arrow.png" style="position: absolute; margin: 0 0 -6px -6px; z-index: -1">
+    <div id="VIEW" style="height: 300px; width: 300px; border: 1px solid black; position: relative; overflow: hidden">
+      <img id="ACTOR_IMAGE" src="car.png" style="position: absolute; margin: 0 0 -6px -6px; z-index: -1">
     </div>
+    <table>
+      <tr><th>Repeat</th><td id="data-repeat"></td></tr>
+      <tr><th>Iteration</th><td id="data-iteration"></td></tr>
+      <tr><th>Generation</th><td id="data-generation"></td></tr>
+      <tr><th>Best Score</th><td id="data-bestScore"></td></tr>
+    </table>
   </body>
 </html>
