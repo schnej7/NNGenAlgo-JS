@@ -1,6 +1,10 @@
 function randomIntFromInterval(min,max) {
     return Math.floor(Math.random() * (max - min)) + min;
-};
+}
+
+function displayData(id, val) {
+    document.getElementById("data-" + id).innerText = val;
+}
 
 var DiscreteNodeInitFunctions = [
     // function() {return Math.random();},
